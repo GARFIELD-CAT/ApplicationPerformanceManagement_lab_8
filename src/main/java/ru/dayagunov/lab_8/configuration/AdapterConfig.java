@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.dayagunov.lab_8.adapters.InMemoryTaskRepositoryAdapter;
 import ru.dayagunov.lab_8.adapters.JpaTaskRepositoryAdapter;
+import ru.dayagunov.lab_8.adapters.MongoTaskRepositoryAdapter;
 import ru.dayagunov.lab_8.service.TaskCoreService;
 
 @Configuration
@@ -22,6 +23,14 @@ public class AdapterConfig {
     @Qualifier("InMemoryTaskCoreService")
     public TaskCoreService inMemoryTaskCoreService(
             InMemoryTaskRepositoryAdapter repositoryPort
+    ) {
+        return new TaskCoreService(repositoryPort);
+    }
+
+    @Bean
+    @Qualifier("MongoTaskCoreService")
+    public TaskCoreService  mongoTaskCoreService(
+            MongoTaskRepositoryAdapter repositoryPort
     ) {
         return new TaskCoreService(repositoryPort);
     }

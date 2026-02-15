@@ -1,12 +1,15 @@
-version: "3.8"
-
 services:
-#  redis-task:
-#    image: redis:latest
-#    container_name: redis-task
-#    ports:
-#      - "6379:6379"
-#    restart: unless-stopped
+  mongodb:
+    image: mongo:7-jammy
+    container_name: demo-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+#    environment:
+#      MONGO_INITDB_ROOT_USERNAME: root
+#      MONGO_INITDB_ROOT_PASSWORD: password
+#      MONGO_INITDB_DATABASE: admin
 
   postgres:
     image: postgres:latest
@@ -20,5 +23,13 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql
 
+    #  redis-task:
+    #    image: redis:latest
+    #    container_name: redis-task
+    #    ports:
+    #      - "6379:6379"
+    #    restart: unless-stopped
+
 volumes:
   postgres_data:
+  mongodb_data:

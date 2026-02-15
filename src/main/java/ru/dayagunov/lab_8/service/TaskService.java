@@ -39,38 +39,6 @@ public class TaskService {
         }
     }
 
-    @Cacheable("allTasks")
-    public List<Task> getAllTasks() {
-        var value = taskCache.get("allTasks", List.class);
-
-        if (value == null) {
-            List<Task> tasks = taskRepository.findAll();
-            taskCache.put("allTasks", tasks);
-
-            return tasks;
-        }
-
-        return value != null ? value : List.of();
-    }
-
-    public Task createTask(CreateTaskDto newTaskData) {
-        Task newTask = new Task();
-        newTask.setDescription(newTaskData.getDescription());
-        newTask.setAmount(newTaskData.getAmount());
-
-        taskRepository.save(newTask);
-
-        return newTask;
-    }
-
-    @Cacheable("task")
-    public Task getTaskById(Integer taskId) {
-        Optional<Task> task = taskRepository.findById(taskId);
-
-        return task.orElse(null);
-    }
-
-
     @CacheEvict(value = "task", allEntries = true)
     public Task updateTask(Integer taskId, CreateTaskDto newTaskData) {
         Optional<Task> OptTask = taskRepository.findById(taskId);

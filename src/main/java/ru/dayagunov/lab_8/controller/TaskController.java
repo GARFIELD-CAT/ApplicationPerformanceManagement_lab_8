@@ -17,15 +17,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/tasks")
 public class TaskController {
-    private final TaskService taskService;
     private final TaskCoreService taskCoreService;
 
     public TaskController(
             TaskService taskService,
 //            @Qualifier("JpaTaskCoreService") TaskCoreService taskCoreService)
-            @Qualifier("InMemoryTaskCoreService") TaskCoreService taskCoreService)
+//            @Qualifier("InMemoryTaskCoreService") TaskCoreService taskCoreService)
+            @Qualifier("MongoTaskCoreService") TaskCoreService taskCoreService)
     {
-        this.taskService = taskService;
         this.taskCoreService = taskCoreService;
     }
 
@@ -36,12 +35,12 @@ public class TaskController {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        return ResponseEntity.ok(taskService.getAllTasks());
+        return ResponseEntity.ok(taskCoreService.getAllTasks());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable Integer id) {
-        Task task = taskService.getTaskById(id);
+        Task task = taskCoreService.getTaskById(id);
 
         if (task == null) {
             return ResponseEntity.notFound().build();
@@ -51,7 +50,7 @@ public class TaskController {
 
     @PostMapping
     public ResponseEntity<Task> createTask(@RequestBody CreateTaskDto newTaskData) {
-        Task task = taskService.createTask(newTaskData);
+        Task task = taskCoreService.createTask(newTaskData);
 
         try {
             Thread.sleep(50);
@@ -64,7 +63,7 @@ public class TaskController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Task> updateTask(@PathVariable Integer id, @RequestBody CreateTaskDto newTaskData) {
-        Task task = taskService.updateTask(id, newTaskData);
+        Task task = taskCoreService.updateTask(id, newTaskData);
 
         return ResponseEntity.ok(task);
     }
@@ -72,5 +71,11 @@ public class TaskController {
     @GetMapping("/avg-amount")
     public ResponseEntity<Double> getAvgAmount() {
         return ResponseEntity.ok(taskCoreService.calculateAverageTaskAmount());
+    }
+
+    @GetMapping("import/batch")
+    public ResponseEntity<String> createBatchTask(@RequestParam(defaultValue = "1000") int count) {
+        taskCoreService.createBatchTask(count);
+        return ResponseEntity.ok("Imported " + count);
     }
 }
